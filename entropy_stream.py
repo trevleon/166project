@@ -42,5 +42,5 @@ def create_block_source(N, T, k, e_type):
 def sample_block_source(block):
     vals = np.zeros(block.shape[0])
     for i in range(block.shape[0]): 
-        vals[i] = int(np.random.choice(range(block.shape[1]), 1, p=np.array(block[i,:])))
+        vals[i] = np.random.choice(range(block.shape[1]), 1, p=np.array(block[i,:]))
     return vals
