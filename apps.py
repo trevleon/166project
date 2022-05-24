@@ -6,10 +6,12 @@ class Entry:
         self.value = value
         self.grave = False
 class LinearProbing: 
+
     def __init__(self, size): 
         self.size = size
         self.table = [None for _ in range(size)]
         self.load = 0
+        #sufficiently large prime number
         self.p = 2**61 - 1
         self.a = random.randint(1, self.p - 1)
         self.b = random.randint(0, self.p - 1)
@@ -52,7 +54,7 @@ class BalancedAllocation:
             sum = 0
             for i in range(self.k): 
                 sum += a[i] * value**i
-            hashes.append(sum % self.p & self.size)
+            hashes.append(sum % self.p % self.size)
         return hashes
             
     def insert(self, value): 
@@ -100,6 +102,7 @@ class BloomFilter:
     def __init__(self, size, k):
         self.size = size
         self.table = [0 for _ in range(size)]
+        #sufficiently large prime number
         self.p = 2**61 - 1
         self.a = [random.randint(1,self.p - 1) for _ in range(k)]
         self.k = k
@@ -110,7 +113,7 @@ class BloomFilter:
             sum = 0
             for i in range(self.k): 
                 sum += self.a[i] * value**i
-            hashes.append(sum % self.p & self.size)
+            hashes.append(sum % self.p % self.size)
         return hashes
 
     def insert(self, value):
