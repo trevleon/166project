@@ -11,25 +11,24 @@ class LinearProbing:
         self.table = [None for _ in range(size)]
         self.load = 0
         self.p = 2**61 - 1
-        self.a = random.randint(1,p - 1)
-        self.b = random.randint(0, p - 1)
+        self.a = random.randint(1, self.p - 1)
+        self.b = random.randint(0, self.p - 1)
     
     def hash(self, value): 
-        return (self.a * value + self.b) % self.p % self.size
+        return int((self.a * value + self.b) % self.p % self.size)
 
     def insert(self, value):
-    
         index = self.hash(value)
         for i in range(self.size):
-            if self.table[index + i] == None or self.table[index + i].grave == True: 
-                self.table[index + i] = Entry(value)
+            if self.table[(index + i) % self.size] == None or self.table[(index + i) % self.size].grave == True: 
+                self.table[(index + i) % self.size] = Entry(value)
                 self.load += 1
                 return i 
     def remove(self, value): 
         index = self.hash(value)
         for i in range(self.size):
-            if self.table[index + i] != None and self.table[index + i].grave == False and self.table[index + i].value == value:
-                self.table[index + i].grave = True
+            if self.table[(index + i) % self.size] != None and self.table[(index + i) % self.size].grave == False and self.table[(index + i) % self.size].value == value:
+                self.table[(index + i) % self.size].grave = True
                 self.load -= 1
                 return i 
     def get_load(self): 
@@ -37,7 +36,7 @@ class LinearProbing:
     def get_size(self): 
         return self.size
 
-class BalancedAllocation: 
+class BalancedAllocation:
     def __init__(self, size, k):
         self.size = size
         self.table = [[] for _ in range(size)]

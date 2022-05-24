@@ -1,9 +1,6 @@
 import random
 import numpy as np
 from numpy import linalg as LA
-DEFAULT_SET_SIZE =5
-
-
 
 def compute_threshold(k, entropy):
     if entropy == "SHANNON":
@@ -13,9 +10,7 @@ def compute_threshold(k, entropy):
     else:
         raise NotImplemented("passed in invalid entropy type")
 
-
-
-def create_block_source(T, k, e_type):
+def create_block_source(N, T, k, e_type):
     """
     T: size of random variables sequence in block
     k: threshold where
@@ -24,14 +19,14 @@ def create_block_source(T, k, e_type):
         - shannon: k = min threshold entropy
     e_type: either min, Renyi, Shannon
 
-    Return: a 2d array where row i represents the distribution of X_i
+    Return: a 2d array of size TxN where row i represents the distribution of X_i
     """
     t = 0
-    dist = np.zeros(DEFAULT_SET_SIZE)
-    prev_dist = np.zeros(DEFAULT_SET_SIZE)  # need to keep this in case condition fails
-    block = np.zeros(DEFAULT_SET_SIZE)
+    dist = np.zeros(N)
+    prev_dist = np.zeros(N)  # need to keep this in case condition fails
+    block = np.zeros(N)
     while (t < T):
-        dist += np.random.uniform(0, 1, DEFAULT_SET_SIZE)
+        dist += np.random.uniform(0, 1, N)
         dist /= np.sum(dist)
         
         if (e_type == "RENYI" and LA.norm(dist)**2 <= k) or \
@@ -42,14 +37,10 @@ def create_block_source(T, k, e_type):
                 t += 1     
         else:
             dist = prev_dist
-    print(block[1:])
-    print("\n\n")
     return block[1:]
 
-
-
-
-if __name__=="__main__":
-    create_block_source(5, 2, "SHANNON")
-    create_block_source(5, 0.5, "RENYI")
-    create_block_source(5, 0.5, "MIN")
+def sample_block_source(block):
+    vals = np.zeros(block.shape[0])
+    for i in range(block.shape[0]): 
+        vals[i] = int(np.random.choice(range(block.shape[1]), 1, p=np.array(block[i,:])))
+    return vals
