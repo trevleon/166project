@@ -5,15 +5,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import math
 
-<<<<<<< HEAD
-def get_blocks(n, T, m, epsilon):
-    k = m + 2 * np.log2(T / epsilon)
-    # k = 2
-    blocks = []
-    types = ["RENYI", "MIN", "SHANNON"]
-    for t in types: 
-            blocks.append(entropy_stream.create_block_source(n, T, entropy_stream.compute_threshold(k, t, n, epsilon), t))
-=======
 def get_blocks(n, T, m, epsilon, type):
     #k = m + 2 * np.log2(T / epsilon)
     #k = 
@@ -23,7 +14,6 @@ def get_blocks(n, T, m, epsilon, type):
     #for t in tqdm(types): 
     blocks.append(entropy_stream.create_block_source(n, T, entropy_stream.compute_threshold(k, types[type]), types[type]))
     
->>>>>>> c882f93e0d0f5952df321f224a2902ab279e84d2
     return blocks
 def get_blocks_probing(n, T, m, epsilon, type):
     #k = 2
