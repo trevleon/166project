@@ -2,11 +2,11 @@ import random
 import numpy as np
 from numpy import linalg as LA
 
-def compute_threshold(k, entropy):
+def compute_threshold(k, entropy, n, epsilon):
     if entropy == "SHANNON":
-        return k    
+        return max(min(k, 1), 1 / n + epsilon)
     elif entropy == "RENYI" or entropy == "MIN":
-        return 2 ** (-k)
+        return max(min(2 ** (-k), 1), 1 / n + epsilon)
     else:
         raise NotImplemented("passed in invalid entropy type")
 
@@ -28,6 +28,8 @@ def create_block_source(N, T, k, e_type):
     while (t < T):
         dist += np.random.uniform(0, 1, N)
         dist /= np.sum(dist)
+        # print("distribution: ", dist)
+        # print("collision probability: ", LA.norm(dist)**2)
         
         if (e_type == "RENYI" and LA.norm(dist)**2 <= k) or \
            (e_type == "MIN" and np.max(dist) <= k) or \

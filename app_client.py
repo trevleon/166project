@@ -3,12 +3,12 @@ import apps
 import numpy as np
 
 def get_blocks(n, T, m, epsilon):
-    # k = m + 2 * np.log2(T / epsilon)
-    k = 2
+    k = m + 2 * np.log2(T / epsilon)
+    # k = 2
     blocks = []
-    types = ["SHANNON", "RENYI", "MIN"]
+    types = ["RENYI", "MIN", "SHANNON"]
     for t in types: 
-            blocks.append(entropy_stream.create_block_source(n, T, entropy_stream.compute_threshold(k, t), t))
+            blocks.append(entropy_stream.create_block_source(n, T, entropy_stream.compute_threshold(k, t, n, epsilon), t))
     return blocks
 
 def test_probing():
