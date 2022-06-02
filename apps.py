@@ -1,5 +1,6 @@
 import statistics as st
 import random
+import numpy as np
 
 class Entry: 
     def __init__(self, value): 
@@ -15,6 +16,7 @@ class LinearProbing:
         self.p = 2**61 - 1
         self.a = random.randint(1, self.p - 1)
         self.b = random.randint(0, self.p - 1)
+        self.random_hash_lookup = dict()
     
     def hash(self, value): 
         return int((self.a * value + self.b) % self.p % self.size)
@@ -37,6 +39,13 @@ class LinearProbing:
         return self.load
     def get_size(self): 
         return self.size
+    def random_hash(self, value):
+        if value in self.random_hash_lookup: 
+            return self.random_hash_lookup[value]
+        else: 
+            h = random.randint(0, self.size - 1)
+            self.random_hash_lookup[value] = h
+            return h 
 
 class BalancedAllocation:
     def __init__(self, size, k):
@@ -45,7 +54,7 @@ class BalancedAllocation:
         self.elems = 0
         self.p = 2**61 - 1
         self.a = [random.randint(1,self.p - 1) for _ in range(k)]
-        
+        self.random_hash_lookup = dict()    
         self.k = k
     
     def hash(self, value): 
@@ -53,7 +62,7 @@ class BalancedAllocation:
         for _ in range(self.k):
             sum = 0
             for i in range(self.k): 
-                sum += a[i] * value**i
+                sum += self.a[i] * value**i
             hashes.append(sum % self.p % self.size)
         return hashes
             
@@ -98,6 +107,14 @@ class BalancedAllocation:
 
         return len(self.table[max_index])
 
+    def random_hash(self, value):
+        if value in self.random_hash_lookup: 
+            return self.random_hash_lookup[value]
+        else: 
+            h = np.random.randint(0, self.size, size = self.k)
+            self.random_hash_lookup[value] = h
+            return h 
+
 class BloomFilter: 
     def __init__(self, size, k):
         self.size = size
@@ -106,6 +123,7 @@ class BloomFilter:
         self.p = 2**61 - 1
         self.a = [random.randint(1,self.p - 1) for _ in range(k)]
         self.k = k
+        self.random_hash_lookup = dict()
 
     def hash(self, value): 
         hashes = []
@@ -127,4 +145,12 @@ class BloomFilter:
             if self.table[index] == 0: 
                 return False
         return True
+
+    def random_hash(self, value):
+        if value in self.random_hash_lookup: 
+            return self.random_hash_lookup[value]
+        else: 
+            h = np.random.randint(0, self.size, size = self.k, replacement = True)
+            self.random_hash_lookup[value] = h
+            return h 
     
