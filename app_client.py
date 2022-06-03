@@ -101,11 +101,12 @@ def balanced_data():
             block = get_block(N, M, T, 1 / (2 * T ** gamma), t)
             print("out of the woods")
             data = []
-            table = apps.BalancedAllocation(M, 2)
+            table = apps.BalancedAllocation(M, 5)
             elems = entropy_stream.sample_block_source(block)
+            print(elems)
             for elem in elems: 
                 table.insert(elem)
-                data.append(table.get_median_load())
+                data.append(table.get_max_load())
             print(data)
             # datas.append(data)
             x = [i for i in range(len(data))]
@@ -147,9 +148,9 @@ def main():
     #test_probing()
     #test_allocation()
     #test_filter()
-    # data = linear_probing_data()
+    data = linear_probing_data()
     # balanced_data()
-    bloom_data()
+    # bloom_data()
 
 
 if __name__=="__main__":

@@ -13,7 +13,7 @@ class LinearProbing:
         self.table = [None for _ in range(size)]
         self.load = 0
         #sufficiently large prime number
-        self.p = 2**61 - 1
+        self.p = 7741
         self.a = random.randint(1, self.p - 1)
         self.b = random.randint(0, self.p - 1)
         self.random_hash_lookup = dict()
@@ -27,7 +27,8 @@ class LinearProbing:
             if self.table[(index + i) % self.size] == None or self.table[(index + i) % self.size].grave == True: 
                 self.table[(index + i) % self.size] = Entry(value)
                 self.load += 1
-                return i 
+                return i
+
     def remove(self, value): 
         index = self.hash(value)
         for i in range(self.size):
@@ -52,18 +53,17 @@ class BalancedAllocation:
         self.size = size
         self.table = [[] for _ in range(size)]
         self.elems = 0
-        self.p = 2**61 - 1
-        self.a = [random.randint(1,self.p - 1) for _ in range(k)]
+        self.p = 7741
+        self.a = [random.randint(0,self.p - 1) for _ in range(k)]
+        self.b = [random.randint(0,self.p - 1) for _ in range(k)]
         self.random_hash_lookup = dict()    
         self.k = k
     
     def hash(self, value): 
         hashes = []
-        for _ in range(self.k):
-            sum = 0
-            for i in range(self.k): 
-                sum += self.a[i] * value**i
-            hashes.append(sum % self.p % self.size)
+        for i in range(self.k):
+            val = self.a[i] * value + self.b[i]
+            hashes.append(int(val % self.p % self.size))
         return hashes
             
     def insert(self, value): 
@@ -71,7 +71,7 @@ class BalancedAllocation:
         loads = []
         for index in hash_indices: 
             loads.append(len(self.table[index]))
-        self.table[loads.index(min(loads))].append(Entry(value))
+        self.table[hash_indices[loads.index(min(loads))]].append(Entry(value))
         self.elems += 1
 
     def remove(self, value):
@@ -120,7 +120,7 @@ class BloomFilter:
         self.size = size
         self.table = [0 for _ in range(size)]
         #sufficiently large prime number
-        self.p = 2**61 - 1
+        self.p = 7741
         self.a = [random.randint(1,self.p - 1) for _ in range(k)]
         self.k = k
         self.random_hash_lookup = dict()

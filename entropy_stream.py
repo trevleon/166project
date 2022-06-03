@@ -15,8 +15,12 @@ def compute_threshold(M, T, epsilon, type):
     elif type == "4.10":
         K = max(M, np.sqrt(M * T / epsilon))
         return 1 / M + 1 / K + np.sqrt((2 * T) / (epsilon * M)) * (1 / K)
+    elif type == "best":
+        return 1 / N + epsilon
+    elif type == "worst":
+        return 1 - epsilon
     else:
-        raise NotImplemented("passed in invalid entropy type")
+        error("notImplemented")
 
 def create_block_source(N, T, p):
     """
