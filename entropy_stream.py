@@ -13,7 +13,7 @@ def compute_threshold(M, T, epsilon, type):
         K = (M * T ** 2) / epsilon
         return 1 / M + T / (epsilon * K)
     elif type == "4.10":
-        K = (M * T ** 2) / epsilon
+        K = max(M, np.sqrt(M * T / epsilon))
         return 1 / M + 1 / K + np.sqrt((2 * T) / (epsilon * M)) * (1 / K)
     else:
         raise NotImplemented("passed in invalid entropy type")
@@ -22,8 +22,8 @@ def create_block_source(N, T, p):
     """
     T: size of random variables sequence in block
     p: threshold denoting described probability per block
-        - min: p = max prob
-        - renyi: p = collisi
+        - min: p = max prob per block
+        - renyi: p = collision probability per block
 
     Return: a 2d array of size TxN where row i represents the distribution of X_i
     """

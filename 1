@@ -61,74 +61,56 @@ def test_filter():
 def linear_probing_data():
     # datas = []
     ret = []
-    for i in range(1):
+    for _ in range(1):
         for t in types:
             N = 1000000
-            M = 20       # 100,  50,  32,  20
-            alpha = 0.95 # 0.13, 0.3, 0.5, 0.95
+            M = 32      # 100,  50,  32,  20
+            alpha = 0.5 # 0.13, 0.3, 0.5, 0.95
             T = alpha * M
             block = get_block(N, M, T, 1 / (T**1.000001), t)
             print("out of the woods")
             data = []
             table = apps.LinearProbing(M)
             elems = entropy_stream.sample_block_source(block)
-            # print(elems)
+            print(elems)
             for elem in elems:
                 data.append(table.insert(elem))
-            # print(data)
-            # datas.append(data)
-            x = [i for i in range(len(data))]
-            plt.plot(x, data)
-            sum = 0
-            for d in data: 
-                sum += d
-            ret.append(sum / len(data))
-    plt.show()
-    # print(ret)
-    plt.plot([1, 2, 3], ret)
-    plt.show()
-    return ret
-
-def balanced_data(): 
-    # datas = []
-    for i in range(10):
-        for t in types:
-            N = 1000000
-            M = 20       # 100,  50,  32,  20
-            alpha = 0.95 # 0.13, 0.3, 0.5, 0.95
-            gamma = 0.5
-            T = alpha * M
-            block = get_block(N, M, T, 1 / (2 * T ** gamma), t)
-            print("out of the woods")
-            data = []
-            table = apps.BalancedAllocation(M, 2)
-            elems = entropy_stream.sample_block_source(block)
-            for elem in elems: 
-                table.insert(elem)
-                data.append(table.get_median_load())
             print(data)
             # datas.append(data)
             x = [i for i in range(len(data))]
             plt.plot(x, data)
-        print(i)
-        plt.show()
-    # return datas
+            for i in range(len(data)):
+                sum = 0
+                for d in data: 
+                    sum += d
+                ret.append(sum / len(data))
+            print(ret)
+    plt.show()
+    return ret
+
+def balanced_data(): 
+    datas = []
+    for _ in range(10): 
+        blocks = get_blocks(10,100,20,.01)
+        data = []
+        table = apps.BalancedAllocation(200)
+        for block in blocks:
+            elems = entropy_stream.sample_block_source(block)
+            for elem in elems: 
+                table.insert(elem)
+                data.append(table.get_median_load())
+            datas.append(data)
+    return datas
 
 def bloom_data(): 
-    # datas = []
-    for i in range(10):
-        for t in types:
-            N = 1000000
-            M = 20       # 100,  50,  32,  20
-            alpha = 0.95 # 0.13, 0.3, 0.5, 0.95
-            gamma = 0.5
-            T = alpha * M
-            block = get_block(N, M, T, 1 / M, t)
-            print("out of the woods")
-            data = []
+    datas = []
+    for _ in range(10):
+        blocks = get_blocks(10,100,20,.01)
+        data = []
+        for block in blocks:
             elems_1 = entropy_stream.sample_block_source(block)
             elems_2 = entropy_stream.sample_block_source(block)
-            bloom = apps.BloomFilter(M, 2)
+            bloom = apps.BloomFilter(200)
             for elem in elems_1: 
                 bloom.insert(elem)
             fp_count = 0
@@ -136,20 +118,14 @@ def bloom_data():
                 if elem not in elems_1 and bloom.contains(elem): 
                     fp_count += 1
             data.append(fp_count)
-            # datas.append(data)
-            x = [i for i in range(len(data))]
-            plt.plot(x, data)
-        print(i)
-        plt.show()
-    # return datas
+        datas.append(data)
+    return datas
 
 def main():
     #test_probing()
     #test_allocation()
     #test_filter()
-    # data = linear_probing_data()
-    # balanced_data()
-    bloom_data()
+    data = linear_probing_data()
 
 
 if __name__=="__main__":
