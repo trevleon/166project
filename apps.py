@@ -8,7 +8,8 @@ class Entry:
         self.grave = False
 class LinearProbing: 
 
-    def __init__(self, size): 
+    def __init__(self, size, ideal = False): 
+        self.ideal = ideal
         self.size = size
         self.table = [None for _ in range(size)]
         self.load = 0
@@ -17,12 +18,16 @@ class LinearProbing:
         self.a = random.randint(1, self.p - 1)
         self.b = random.randint(0, self.p - 1)
         self.random_hash_lookup = dict()
+
     
     def hash(self, value): 
         return int((self.a * value + self.b) % self.p % self.size)
 
     def insert(self, value):
-        index = self.hash(value)
+        if not self.ideal: 
+            index = self.hash(value)
+        else: 
+            index = self.random_hash(value)
         for i in range(self.size):
             if self.table[(index + i) % self.size] == None or self.table[(index + i) % self.size].grave == True: 
                 self.table[(index + i) % self.size] = Entry(value)
@@ -79,7 +84,7 @@ class BalancedAllocation:
         for index in hash_indices: 
             if value in self.table[index]: 
                 self.table[index].pop(self.table[index].index(value))
-                self.elems += 1
+                self.elems -= 1
                 return index
 
     def get_min_load(self): 
@@ -137,7 +142,7 @@ class BloomFilter:
     def insert(self, value):
         hash_indices = self.hash(value)
         for index in hash_indices: 
-            self.table[index] = 1
+            self.table[int(index)] = 1
 
     def contains(self, value): 
         hash_indices = self.hash(value)

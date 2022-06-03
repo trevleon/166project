@@ -6,10 +6,10 @@ from tqdm import tqdm
 import math
 
 # types = ["SHANNON", "RENYI", "MIN"]
-types = ["4.6", "4.7", "4.10"]
+types = ["4.6", "4.7", "Max CP"]#"4.10"]
 
 def get_block(N, M, T, epsilon, type):
-    p = entropy_stream.compute_threshold(M, T, epsilon, type)
+    p = entropy_stream.compute_threshold(N, M, T, epsilon, type)
     print(p, ">?", 1 / N)
     # for t in tdqm(types):
     return entropy_stream.create_block_source(N, T, p)
@@ -59,16 +59,18 @@ def test_filter():
         elems = entropy_stream.sample_block_source(block)
 
 def linear_probing_data():
-    # datas = []
+    trials = 100
     ret = []
-    for i in range(1):
-        for t in types:
+    
+    for t in types:
+        datas = []
+        for i in range(trials):
             N = 1000000
-            M = 20       # 100,  50,  32,  20
-            alpha = 0.95 # 0.13, 0.3, 0.5, 0.95
+            M = 20      # 100,  50,  32,  20
+            alpha = 0.75 # 0.13, 0.3, 0.5, 0.95
             T = alpha * M
             block = get_block(N, M, T, 1 / (T**1.000001), t)
-            print("out of the woods")
+            #print("out of the woods")
             data = []
             table = apps.LinearProbing(M)
             elems = entropy_stream.sample_block_source(block)
@@ -76,17 +78,56 @@ def linear_probing_data():
             for elem in elems:
                 data.append(table.insert(elem))
             # print(data)
-            # datas.append(data)
-            x = [i for i in range(len(data))]
-            plt.plot(x, data)
+            datas.append(data)
+
+
+
+        avgs = []
+        for i in range(len(datas[0])):
             sum = 0
-            for d in data: 
-                sum += d
-            ret.append(sum / len(data))
+            for j in range(len(datas)):
+                sum += datas[j][i]
+            avgs.append(sum / len(datas))
+        ret.append(avgs)
+
+
+
+    '''datas = []
+    for i in range(1): 
+
+        N = 1000000
+        M = 20     # 100,  50,  32,  20
+        alpha = 0.7 # 0.13, 0.3, 0.5, 0.95
+        T = alpha * M
+        block = get_block(N, M, T, 1 / (T**1.000001), t)
+        table = apps.LinearProbing(M, True)
+        elems = entropy_stream.sample_block_source(block)
+        for elem in elems: 
+            data.append(table.insert(elem))
+                # print(data)
+        datas.append(data)
+    avgs = []
+    for i in range(len(datas[0])):
+        sum = 0
+        for j in range(len(datas)):
+            sum += datas[j][i]
+        avgs.append(sum / len(datas))
+    ret.append(avgs)
+    print(ret)'''
+
+    x = [i for i in range(len(ret[0]))]
+    for r in range(len(ret)): 
+        plt.plot(x, ret[r], label = types[r])
+    #plt.plot(x, ret[-1], label = "Ideal Hash" )
+    #plt.plot(x, ret)
+    plt.legend()
+    plt.xlabel("Number of Inserted Elements")
+    plt.ylabel("Average Insertion Time")
+    plt.title("Linear Probing, Insertion time vs. Load, Varied Renyi Entropy")            
     plt.show()
     # print(ret)
-    plt.plot([1, 2, 3], ret)
-    plt.show()
+    #plt.plot([1, 2, 3], ret)
+    #plt.show()
     return ret
 
 def balanced_data(): 

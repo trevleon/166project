@@ -2,7 +2,7 @@ import random
 import numpy as np
 from numpy import linalg as LA
 
-def compute_threshold(M, T, epsilon, type):
+def compute_threshold(N, M, T, epsilon, type):
     """
     returns p value for given choice of entropy
     """
@@ -17,10 +17,10 @@ def compute_threshold(M, T, epsilon, type):
         return 1 / M + 1 / K + np.sqrt((2 * T) / (epsilon * M)) * (1 / K)
     elif type == "best":
         return 1 / N + epsilon
-    elif type == "worst":
+    elif type == "Max CP":
         return 1 - epsilon
     else:
-        error("notImplemented")
+        print("whoops")
 
 def create_block_source(N, T, p):
     """
