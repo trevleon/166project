@@ -18,14 +18,12 @@ def compute_threshold(M, T, epsilon, type):
     else:
         raise NotImplemented("passed in invalid entropy type")
 
-def create_block_source(N, T, p, e_type):
+def create_block_source(N, T, p):
     """
     T: size of random variables sequence in block
     p: threshold denoting described probability per block
         - min: p = max prob
-        - renyi: p = collision prob
-        - shannon: p = min threshold entropy
-    e_type: either min, Renyi, Shannon
+        - renyi: p = collisi
 
     Return: a 2d array of size TxN where row i represents the distribution of X_i
     """
@@ -38,7 +36,7 @@ def create_block_source(N, T, p, e_type):
         dist /= np.sum(dist)
         # print("distribution: ", dist)
         # print("collision probability: ", LA.norm(dist)**2) 
-        if ((e_type == "4.6" or e_type == "4.7" or e_type == "4.10") and LA.norm(dist)**2 <= p): 
+        if LA.norm(dist)**2 <= p: 
             prev_dist = dist
             block = np.vstack((block, dist)) 
             t += 1     
